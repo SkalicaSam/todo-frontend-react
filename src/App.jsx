@@ -1,6 +1,8 @@
 import React, { useState, useEffect  } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import Login from './Login';
+import Tasks from './Tasks';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,10 +42,18 @@ function App() {
   }
 
   return (
-    <>
-      <h1>Vítej, {username}!</h1>
-      <button onClick={handleLogout}>Odhlásit se</button>
-    </>
+      <Router>
+            <nav>
+              <Link to="/">Home</Link> |{' '}
+              <Link to="/tasks">My Tasks</Link> |{' '}
+              <button onClick={handleLogout}>Logout</button>
+            </nav>
+
+            <Routes>
+              <Route path="/" element={<h1>Welcome, {username}!</h1>} />
+              <Route path="/tasks" element={<Tasks />} />
+            </Routes>
+          </Router>
   );
 }
 
