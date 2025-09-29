@@ -23,7 +23,7 @@ export default function Login({ onLogin }) {
 
         if (response.ok) {
           const data = await response.json();
-          localStorage.setItem('token', data.token); // Ulož JWT token
+          sessionStorage.setItem('token', data.token);
           onLogin(username, data.token); // Posli token do App komponenty
 
 

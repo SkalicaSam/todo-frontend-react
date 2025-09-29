@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import Login from './Login';
 import Tasks from './Tasks';
+import EditTask from './EditTask';
+import CreateTask from './CreateTask';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -52,6 +55,8 @@ function App() {
             <Routes>
               <Route path="/" element={<h1>Welcome, {username}!</h1>} />
               <Route path="/tasks" element={<Tasks />} />
+              <Route path="/edit-task/:id" element={<EditTask />} />
+              <Route path="/create-task" element={<CreateTask />} />
             </Routes>
           </Router>
   );
