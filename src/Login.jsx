@@ -8,23 +8,25 @@ export default function Login({ onLogin }) {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Zakódovanie username:password do Base64
-    const credentials = btoa(`${username}:${password}`);
+      try {
+        // Zmena na POST request na správny endpoint
+        const response = await fetch("http://localhost:8080/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
+        });
 
-    try {
-      const response = await fetch("http://localhost:8080/api/auth/check", {
-        method: "GET", // alebo POST, podľa toho čo máš
-        headers: {
-          "Authorization": `Basic ${credentials}`,
-          "Content-Type": "application/json"
-        }
-      });
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token); // Ulož JWT token
+          onLogin(username, data.token); // Posli token do App komponenty
 
-      if (response.ok) {
-        const data = await response.text();
-        localStorage.setItem('credentials', credentials);  // Save credentials for future requests
-        console.log("Úspešné prihlásenie:", data);
-        onLogin(username, credentials);  // Informuje rodiče o úspěšném přihlášení
+
       } else {
         console.error("Neúspešné prihlásenie");
         setError("Neplatné uživatelské jméno nebo heslo");
