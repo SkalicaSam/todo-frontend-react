@@ -10,15 +10,20 @@ export default function Tasks() {
       try {
         const token = sessionStorage.getItem('token');
         if (!token) {
-            setError('Neplatné přihlášení');
-        return;
+          setError('Nejste přihlášeni');
+          return;
         }
+
         const response = await fetch('http://localhost:8080/api/tasks', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
+        if (response.status === 403) {
+          sessionStorage.removeItem('token');
+          window.location.reload(); // Force logout
+        }
         if (response.ok) {
           const data = await response.json();
           setTasks(data);

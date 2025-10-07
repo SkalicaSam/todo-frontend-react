@@ -13,27 +13,30 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);  // nový stav
 
     useEffect(() => {
-      const savedUsername = localStorage.getItem('username');
-      const savedCredentials = localStorage.getItem('credentials');
-      if (savedUsername && savedCredentials) {
+      const token = sessionStorage.getItem('token');
+      if (token) {
         setIsLoggedIn(true);
-        setUsername(savedUsername);
+        const savedUsername = localStorage.getItem('username');
+        setUsername(savedUsername || 'User');
+      } else {
+        setIsLoggedIn(false);
+        localStorage.removeItem('username');
       }
     setIsLoading(false);  // načítání dokončeno
     }, []);
 
-  const handleLogin = (username, credentials) => {
+  const handleLogin = (username, token) => {
+    sessionStorage.setItem('token', token);
+    localStorage.setItem('username', username);
     setIsLoggedIn(true);
     setUsername(username);
-    localStorage.setItem('username', username);
-    localStorage.setItem('credentials', credentials);
   };
 
   const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    localStorage.removeItem('username');
     setIsLoggedIn(false);
     setUsername('');
-    localStorage.removeItem('username');
-    localStorage.removeItem('credentials');
   };
 
     if (isLoading) {
