@@ -1,94 +1,51 @@
-import React, { useState, useEffect  } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
-
-import axios from 'axios';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import useAuth from './hooks/useAuth';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 import Login from './Login';
-import Tasks from './Tasks';
-import EditTask from './EditTask';
-import CreateTask from './CreateTask';
 import Register from './Register';
-
+import Tasks from './Tasks';
+import CreateTask from './CreateTask';
+import EditTask from './EditTask';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [isLoading, setIsLoading] = useState(true);  // nový stav pro načítání
-
-    useEffect(() => {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        setIsLoggedIn(true);
-        const savedUsername = localStorage.getItem('username');
-        setUsername(savedUsername || 'User');
-      } else {
-        setIsLoggedIn(false);
-        localStorage.removeItem('username');
-      }
-    setIsLoading(false);  // načítání dokončeno
-    }, []);
-
-  const handleLogin = (username, token) => {
-    sessionStorage.setItem('token', token);
-    localStorage.setItem('username', username);
-    setIsLoggedIn(true);
-    setUsername(username);
-  };
+  const { user, loading, login, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    sessionStorage.removeItem('token');
-    localStorage.removeItem('username');
-    setIsLoggedIn(false);
-    setUsername('');
+    logout();
+    navigate('/');
   };
 
-    if (isLoading) {
-      return null; // nebo můžeš zobrazit spinner/loading komponentu
-    }
-//
-//   if (!isLoggedIn) {
-//     return <Login onLogin={handleLogin} />;   // předání onLogin prop
-//   }
+  if (loading) {
+    return null;
+  }
 
   return (
-      <Router>
-            <nav>
-              <Link to="/">Home</Link> |{' '}
-              {sessionStorage.getItem('token') && (
-                <>
-                  <Link to="/tasks">My Tasks</Link> |{' '}
-                  <button onClick={handleLogout}>Logout</button>
-                </>
-              )}
-              {!sessionStorage.getItem('token') && (
-                <>
-                  <Link to="/login">Login</Link> |{' '}
-                  <Link to="/register">Register</Link>
-                </>
-              )}
-            </nav>
+    <>
+      <Navbar isLoggedIn={!!user} onLogout={handleLogout} />
+      <Routes>
+         {/* Public routes */}
+        <Route path="/login" element={<Login onLogin={login} />} />
+        <Route path="/register" element={<Register onLogin={login} />} />
+{/*         <Route path="/" element={<h1>Welcome, {user?.username}!</h1>} /> */}
+        <Route path="/" element={  user ?
+                    (
+                      <h1>Welcome, {user.username}!</h1>
+                    ) : (
+                      <h1>Welcome, but you're not logged in!</h1>
+                    )
+                  }  />
 
-            <Routes>
-                <Route path="/register" element={<Register onLogin={handleLogin} />} />
-                <Route path="/login" element={<Login onLogin={handleLogin} />} />
-              <Route
-                path="/"
-                element={
-                  sessionStorage.getItem('token') ? (
-                    <h1>Welcome, {username}!</h1>
-                  ) : (
-                      <>
-                     <h1>Welcome</h1>
-                    <h2>Nejste přihlášen !</h2>
-                    </>
-                  )
-                }
-              />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/edit-task/:id" element={<EditTask />} />
-              <Route path="/create-task" element={<CreateTask />} />
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/create-task" element={<CreateTask />} />
+          <Route path="/edit-task/:id" element={<EditTask />} />
+        </Route>
 
-            </Routes>
-          </Router>
+      </Routes>
+    </>
   );
 }
 
