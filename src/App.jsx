@@ -1,12 +1,12 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import useAuth from './hooks/useAuth';
-import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './Login';
-import Register from './Register';
-import Tasks from './Tasks';
-import CreateTask from './CreateTask';
-import EditTask from './EditTask';
+import useAuth from './components/auth/useAuth';
+import Navbar from './components/layout/Navbar';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import Tasks from './components/tasks/Tasks';
+import CreateTask from './components/tasks/CreateTask';
+import EditTask from './components/tasks/EditTask';
 
 function App() {
   const { user, loading, login, logout } = useAuth();

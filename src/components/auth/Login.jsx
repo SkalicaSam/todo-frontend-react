@@ -25,15 +25,20 @@ export default function Login({ onLogin }) {
         onLogin(username, data.token);
         navigate("/"); // This will now work
       } else {
-        setError("Neplatné uživatelské jméno nebo heslo");
+         const errorMessage = await response.text();
+         setError(errorMessage);
+         setPassword("");
       }
     } catch (error) {
-      setError("Chyba sítě");
+      setPassword("");
+      setError("Connection Error");
+      console.error("API Error:", error);
     }
   };
 
   return (
     <div>
+      {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
       <form onSubmit={handleLogin}>
         <input
           type="text"
