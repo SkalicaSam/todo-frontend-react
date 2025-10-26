@@ -5,6 +5,7 @@ export default function Login({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate(); // Add this line
 
   const handleLogin = async (e) => {
@@ -46,12 +47,31 @@ export default function Login({ onLogin }) {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              right: '5px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'none',
+              border: 'none',          // Removes border
+              outline: 'none',         // Removes outline when clicked
+              cursor: 'pointer',
+              padding: '0 5px'         // Adds some clickable area
+            }}
+          >
+            {showPassword ? '🙈' : '👁️'}
+          </button>
+        </div>
         <button type="submit">Login</button>
       </form>
     </div>

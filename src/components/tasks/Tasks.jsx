@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -29,6 +30,11 @@ export default function Tasks() {
     fetchTasks();
   }, []);
 
+  // Filter tasks based on search term
+  const filteredTasks = tasks.filter(task =>
+    task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    task.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleDelete = async (taskId) => {
     try {
@@ -56,27 +62,36 @@ export default function Tasks() {
 
   return (
     <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>Your Tasks</h2>
+        <Link to="/create-task">
+          <button style={{ marginBottom: '1rem' }}>Create New Task</button>
+        </Link>
+      </div>
 
-          <h2>Your Tasks</h2><br></br>
+      {/* Search input */}
+      <div style={{ marginBottom: '1rem' }}>
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: '0.5rem', width: '300px' }}
+        />
+      </div>
 
-          <Link to="/create-task">
-                  <button style={{ marginBottom: '1rem' }}>Create New Task</button>
-          </Link>
-        </div>
-
-      {tasks.length === 0 ? (
+      {filteredTasks.length === 0 ? (
         <p>No tasks found.</p>
       ) : (
         <ul>
-          {tasks.map(task => (
+          {filteredTasks.map(task => (
             <li key={task.id}>
               <strong>{task.title}</strong>: {task.description}
               <div style={{ marginLeft: '1rem' }}>
                 <Link to={`/edit-task/${task.id}`}>
-                    <button style={{ marginRight: '0.5rem' }}>Edit</button>
+                  <button style={{ marginRight: '0.5rem' }}>Edit</button>
                 </Link>
-                     <button onClick={() => handleDelete(task.id)}>Delete</button>
+                <button onClick={() => handleDelete(task.id)}>Delete</button>
               </div>
             </li>
           ))}
