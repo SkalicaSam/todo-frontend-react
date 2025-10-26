@@ -5,6 +5,8 @@ export default function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("title"); // title, date, priority
+
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -35,6 +37,21 @@ export default function Tasks() {
     task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     task.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Sort tasks
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    switch (sortBy) {
+      case "title":
+        return a.title.localeCompare(b.title);
+      case "date":
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      case "priority":
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+      default:
+        return 0;
+    }
+  });
 
   const handleDelete = async (taskId) => {
     try {
@@ -78,13 +95,22 @@ export default function Tasks() {
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ padding: '0.5rem', width: '300px' }}
         />
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          style={{ padding: '0.5rem' }}
+        >
+          <option value="title">Sort by Title</option>
+          <option value="date">Sort by Date</option>
+          <option value="priority">Sort by Priority</option>
+        </select>
       </div>
 
-      {filteredTasks.length === 0 ? (
+      {sortedTasks.length === 0 ? (
         <p>No tasks found.</p>
       ) : (
         <ul>
-          {filteredTasks.map(task => (
+          {sortedTasks.map(task => (
             <li key={task.id}>
               <strong>{task.title}</strong>: {task.description}
               <div style={{ marginLeft: '1rem' }}>
