@@ -6,10 +6,11 @@ export default function Tasks() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("title"); // title, date, priority
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchTasks = async () => {
+      setIsLoading(true);
       try {
         const token = sessionStorage.getItem('token');
         const response = await fetch('http://localhost:8080/api/tasks', {
@@ -26,6 +27,8 @@ export default function Tasks() {
         }
       } catch (err) {
         setError('Network error');
+      } finally {
+          setIsLoading(false);
       }
     };
 
@@ -72,6 +75,10 @@ export default function Tasks() {
       setError('Network error');
     }
   };
+
+  if (isLoading) {
+     return <p>Loading tasks…</p>;
+  }
 
   if (error) {
     return <p style={{ color: 'red' }}>{error}</p>;
