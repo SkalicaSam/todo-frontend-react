@@ -11,6 +11,7 @@ export default function CreateTask() {
 
   const [completed, setCompleted] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [dueDateError, setDueDateError] = useState('');
 
   // Validation for title
   const validateTitle = (value) => {
@@ -40,6 +41,20 @@ export default function CreateTask() {
     return true;
   };
 
+  const validateDueDate = (value) => {
+   if (!value) {
+       setDueDateError('Due date is required');
+       return false;
+     }
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    if (value < today) {
+      setDueDateError('Due date cannot be in the past');
+      return false;
+    }
+    setDueDateError('');
+    return true;
+  };
+
   // Handlers for changes
   const handleTitleChange = (e) => {
     const value = e.target.value;
@@ -57,7 +72,8 @@ export default function CreateTask() {
 
     const isTitleValid = validateTitle(title);
     const isDescriptionValid = validateDescription(description);
-    if (!isTitleValid || !isDescriptionValid) {
+    const isDueDateValid = validateDueDate(dueDate);
+    if (!isTitleValid || !isDescriptionValid || !isDueDateValid) {
       return;
     }
 
@@ -131,8 +147,13 @@ export default function CreateTask() {
                     <input
                       type="date"
                       value={dueDate}
-                      onChange={(e) => setDueDate(e.target.value)}
+                      //required     // or you can only get required
+                      onChange={(e) => {
+                          setDueDate(e.target.value);
+                          if (dueDateError) validateDueDate(e.target.value);
+                          }}
                     />
+                    {dueDateError && <p style={{ color: 'red' }}>{dueDateError}</p>}
                 </label>
                 <br />
 
