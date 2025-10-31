@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 export default function EditTask() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [task, setTask] = useState({ title: '', description: '' });
+  const [task, setTask] = useState({ title: '', description: '', completed: false, dueDate: '' });
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -69,6 +69,26 @@ export default function EditTask() {
           value={task.description}
           onChange={(e) => setTask({...task, description: e.target.value})}
         />
+        <br />
+        <label>
+          Completed:
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={(e) => setTask({ ...task, completed: e.target.checked })}
+          />
+        </label>
+        <br />
+        <label>
+          Due date:
+          <input
+            type="date"
+            value={task.dueDate}
+            onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+          />
+        </label>
+        <br />
+
         <button type="submit">Save Changes</button>
       </form>
     </div>

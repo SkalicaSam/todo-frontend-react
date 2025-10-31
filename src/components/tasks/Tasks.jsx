@@ -120,12 +120,19 @@ export default function Tasks() {
           {sortedTasks.map(task => (
             <li key={task.id}>
               <strong>{task.title}</strong>: {task.description}
+              <br />
+                <span style={{ fontSize: '0.9rem' }}>
+                  Completed: {task.completed ? 'Yes' : 'No'} |
+                  Due: {task.dueDate || '—'}
+                </span>
+                <br />
               <div style={{ marginLeft: '1rem' }}>
                 <Link to={`/edit-task/${task.id}`}>
                   <button style={{ marginRight: '0.5rem' }}>Edit</button>
                 </Link>
                 <button onClick={() => handleDelete(task.id)}>Delete</button>
               </div>
+              <br />
             </li>
           ))}
         </ul>

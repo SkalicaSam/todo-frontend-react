@@ -9,6 +9,9 @@ export default function CreateTask() {
   const [descriptionError, setDescriptionError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  const [completed, setCompleted] = useState('');
+  const [dueDate, setDueDate] = useState('');
+
   // Validation for title
   const validateTitle = (value) => {
     if (!value.trim()) {
@@ -66,7 +69,7 @@ export default function CreateTask() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ title, description })
+        body: JSON.stringify({ title, description, completed, dueDate })
       });
 
       if (response.ok) {
@@ -112,6 +115,26 @@ export default function CreateTask() {
                   />
                   {descriptionError && <p style={{ color: 'red' }}>{descriptionError}</p>}
                 </div>
+
+                <label>
+                    Completed:
+                    <input
+                      type="checkbox"
+                      checked={completed}
+                      onChange={(e) => setCompleted(e.target.checked)}
+                    />
+                </label>
+                <br />
+
+                <label>
+                    Due date:
+                    <input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                    />
+                </label>
+                <br />
 
                 <button type="submit">Create Task</button>
                 <button type="button" onClick={() => navigate('/tasks')}>
