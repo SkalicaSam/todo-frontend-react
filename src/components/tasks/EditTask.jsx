@@ -5,7 +5,8 @@ export default function EditTask() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [task, setTask] = useState({ title: '', description: '', completed: false, dueDate: '' });
-  const [error, setError] = useState(null);
+  const [apiError, setApiError] = useState(null);  // for backend errors
+  const [errors, setErrors] = useState({}); // for validation errors
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -21,17 +22,39 @@ export default function EditTask() {
           const data = await response.json();
           setTask(data);
         } else {
-          setError('Task not found');
+          setApiError('Task not found');
         }
       } catch (err) {
-        setError('Network error');
+        setApiError('Network error');
       }
     };
     fetchTask();
   }, [id]);
 
+
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!task.title.trim()) {
+      newErrors.title = 'Názov je povinný';
+    }
+    if (task.dueDate) {
+      const selectedDate = new Date(task.dueDate);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      if (selectedDate < today) {
+        newErrors.dueDate = 'Dátum nesmie byť v minulosti';
+      }
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+     if (!validateForm()) return;
     try {
       const token = sessionStorage.getItem('token');
       const response = await fetch(`http://localhost:8080/api/tasks/${id}`, {
@@ -43,27 +66,39 @@ export default function EditTask() {
         body: JSON.stringify(task)
       });
 
+      if (response.status === 403) {
+              localStorage.removeItem('token');
+              localStorage.removeItem('username');
+              navigate('/login');
+              return;
+            }
       if (response.ok) {
         navigate('/tasks');
       } else {
-        setError('Failed to update task');
+        setApiError('Failed to update task');
       }
     } catch (err) {
-      setError('Network error');
+      setApiError('Network error');
     }
   };
+
 
   return (
     <div>
       <h2>Edit Task</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {apiError  && <p style={{ color: 'red' }}>{apiError}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Title"
           value={task.title}
-          onChange={(e) => setTask({...task, title: e.target.value})}
+          onChange={(e) => {
+              setTask({...task, title: e.target.value});
+              setErrors({...errors, title: ''});
+             }}
         />
+        {errors.title && <p style={{ color: 'red', margin: 0 }}>{errors.title}</p>}
+
         <textarea
           placeholder="Description"
           value={task.description}
@@ -86,6 +121,7 @@ export default function EditTask() {
             value={task.dueDate}
             onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
           />
+          {errors.dueDate && <p style={{ color: 'red', margin: 0 }}>{errors.dueDate}</p>}
         </label>
         <br />
 

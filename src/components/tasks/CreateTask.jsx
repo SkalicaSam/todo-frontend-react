@@ -120,7 +120,7 @@ export default function CreateTask() {
                     value={title}
                     onChange={handleTitleChange}
                   />
-                  {titleError && <p style={{ color: 'red' }}>{titleError}</p>}
+                  {titleError && <p style={{ color: 'red' }}>{errors.title}</p>}
                 </div>
 
                 <div>
@@ -129,7 +129,7 @@ export default function CreateTask() {
                     value={description}
                     onChange={handleDescriptionChange}
                   />
-                  {descriptionError && <p style={{ color: 'red' }}>{descriptionError}</p>}
+                  {descriptionError && <p style={{ color: 'red' }}>{errors.dueDate}</p>}
                 </div>
 
                 <label>
