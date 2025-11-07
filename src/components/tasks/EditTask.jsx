@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-export default function EditTask() {
+export default function EditTask({ onLogout }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [task, setTask] = useState({ title: '', description: '', completed: false, dueDate: '' });
@@ -67,8 +67,9 @@ export default function EditTask() {
       });
 
       if (response.status === 403) {
-              localStorage.removeItem('token');
-              localStorage.removeItem('username');
+              if (typeof onLogout === 'function') {  // type controll function
+                onLogout();
+              }
               navigate('/login');
               return;
             }

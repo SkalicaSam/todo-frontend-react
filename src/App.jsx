@@ -41,7 +41,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/create-task" element={<CreateTask />} />
-          <Route path="/edit-task/:id" element={<EditTask />} />
+          <Route path="/edit-task/:id" element={<EditTask onLogout={handleLogout} />} />
         </Route>
 
       </Routes>
