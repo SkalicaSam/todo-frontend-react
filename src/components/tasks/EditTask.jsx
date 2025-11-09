@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { validateTask } from '../utils/Validators';
 
 export default function EditTask({ onLogout }) {
   const { id } = useParams();
@@ -8,35 +9,11 @@ export default function EditTask({ onLogout }) {
   const [apiError, setApiError] = useState(null);  // for backend errors
   const [errors, setErrors] = useState({}); // for validation errors
 
-    const validateForm = () => {
-      const newErrors = {};
-      const titleTrim = task.title.trim();
-      if (!titleTrim) {
-        newErrors.title = 'Title is required';
-      } else if (titleTrim.length <= 2) {
-           newErrors.title = 'Title must be at least 2 characters';
-      }
-
-      const descTrim = task.description.trim();
-      if (!descTrim) {
-        newErrors.description = 'Description is required';
-      } else if (descTrim.length <= 3) {
-        newErrors.description = 'Description must be at least 3 characters';
-      }
-
-      if (task.dueDate) {
-        const selectedDate = new Date(task.dueDate);
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        if (!selectedDate) {
-          newErrors.dueDate('Due date cannot be in the past');
-        } else if (selectedDate < today) {
-          newErrors.dueDate = 'Due date cannot be in the past';
-        }
-      }
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    };
+const validateForm = () => {
+  const newErrors = validateTask(task); // returns error object
+  setErrors(newErrors);  // ← Updates state, React automatically re-renders component because state changed
+  return Object.keys(newErrors).length === 0; // true if no errors
+};
 
   useEffect(() => {
     const fetchTask = async () => {
