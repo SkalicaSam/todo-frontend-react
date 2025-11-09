@@ -8,6 +8,7 @@ export default function EditTask({ onLogout }) {
   const [task, setTask] = useState({ title: '', description: '', completed: false, dueDate: '' });
   const [apiError, setApiError] = useState(null);  // for backend errors
   const [errors, setErrors] = useState({}); // for validation errors
+  const [success, setSuccess] = useState(false);
 
 const validateForm = () => {
   const newErrors = validateTask(task); // returns error object
@@ -61,7 +62,10 @@ const validateForm = () => {
         return;
       }
       if (response.ok) {
-        navigate('/tasks');
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/tasks');
+        }, 2500);
       } else {
         setApiError('Failed to update task');
       }
@@ -75,47 +79,57 @@ const validateForm = () => {
     <div>
       <h2>Edit Task</h2>
       {apiError  && <p style={{ color: 'red' }}>{apiError}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={task.title}
-          onChange={(e) => {
-              setTask({...task, title: e.target.value});
-              setErrors({...errors, title: ''});
-             }}
-        />
-        {errors.title && <p style={{ color: 'red', margin: 0 }}>{errors.title}</p>}
 
-        <textarea
-          placeholder="Description"
-          value={task.description}
-          onChange={(e) => setTask({...task, description: e.target.value})}
-        />
-        {errors.description && <p style={{ color: 'red', margin: 0 }}>{errors.description}</p>}
-        <br />
-        <label>
-          Completed:
-          <input
-            type="checkbox"
-            checked={task.completed}
-            onChange={(e) => setTask({ ...task, completed: e.target.checked })}
-          />
-        </label>
-        <br />
-        <label>
-          Due date:
-          <input
-            type="date"
-            value={task.dueDate}
-            onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-          />
-          {errors.dueDate && <p style={{ color: 'red', margin: 0 }}>{errors.dueDate}</p>}
-        </label>
-        <br />
+      {success ? (
+          <div>
+            <p style={{ color: 'green' }}>Task updated successfully!</p>
+            <p>Redirecting to tasks list...</p>
+          </div>
 
-        <button type="submit">Save Changes</button>
-      </form>
+      ) : (
+
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Title"
+              value={task.title}
+              onChange={(e) => {
+                  setTask({...task, title: e.target.value});
+                  setErrors({...errors, title: ''});
+                 }}
+            />
+            {errors.title && <p style={{ color: 'red', margin: 0 }}>{errors.title}</p>}
+
+            <textarea
+              placeholder="Description"
+              value={task.description}
+              onChange={(e) => setTask({...task, description: e.target.value})}
+            />
+            {errors.description && <p style={{ color: 'red', margin: 0 }}>{errors.description}</p>}
+            <br />
+            <label>
+              Completed:
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={(e) => setTask({ ...task, completed: e.target.checked })}
+              />
+            </label>
+            <br />
+            <label>
+              Due date:
+              <input
+                type="date"
+                value={task.dueDate}
+                onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+              />
+              {errors.dueDate && <p style={{ color: 'red', margin: 0 }}>{errors.dueDate}</p>}
+            </label>
+            <br />
+
+            <button type="submit">Save Changes</button>
+          </form>
+      )}
     </div>
   );
 }
