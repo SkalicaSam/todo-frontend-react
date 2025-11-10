@@ -7,6 +7,13 @@ export default function Tasks() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("title"); // title, date, priority
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
+  useEffect(() => {
+    if (deleteSuccess) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [deleteSuccess]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -57,6 +64,9 @@ export default function Tasks() {
   });
 
   const handleDelete = async (taskId) => {
+      if (!window.confirm("Are you sure you want to delete this task?")) {
+        return;
+      }
     try {
       const token = sessionStorage.getItem('token');
       const response = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
@@ -68,6 +78,8 @@ export default function Tasks() {
 
       if (response.ok) {
         setTasks(tasks.filter(task => task.id !== taskId));
+        setDeleteSuccess(true);
+        setTimeout(() => setDeleteSuccess(false), 3000); // Hide after 3 seconds
       } else {
         setError('Failed to delete task');
       }
@@ -86,6 +98,9 @@ export default function Tasks() {
 
   return (
     <div>
+
+      {deleteSuccess && <p style={{ color: 'green' }}>Task was deleted succesfuly !</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>Your Tasks</h2>
         <Link to="/create-task">
