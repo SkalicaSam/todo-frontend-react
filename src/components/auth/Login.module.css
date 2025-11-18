@@ -1,0 +1,61 @@
+.formContainer {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+}
+
+.formTitle {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.submitButton:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  color: #ff4d4d;
+  margin: 0.5rem 0;
+}

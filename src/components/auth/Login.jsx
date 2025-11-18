@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { validateLogin } from '../utils/Validators';
 
+import styles from './Login.module.css';
+
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -50,49 +52,59 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div>
-      {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => {
-              setUsername(e.target.value);
-              setValidationErrors({...validationErrors, username: ''});
-              }}
-        />
-        {validationErrors.username && <p style={{ color: 'red', margin: 0 }}>{validationErrors.username}</p>}
-        <div style={{ position: 'relative' }}>
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => {
-                setPassword(e.target.value);
-                setValidationErrors({...validationErrors, password: ''});
-                }}
-          />
-          {validationErrors.password && <p style={{ color: 'red', margin: 0 }}>{validationErrors.password}</p>}
+
+    <div className={styles.formContainer}>
+        <h2 className={styles.formTitle}>Login</h2>
+      {error && <div className={styles.errorMessage}>{error}</div>}
+
+      <form onSubmit={handleLogin} className={styles.form}>
+        <div className={styles.inputGroup}>
+            <input
+              type="text"
+              placeholder="Username"
+              className={styles.inputField}
+              value={username}
+              onChange={(e) => {
+                  setUsername(e.target.value);
+                  setValidationErrors({...validationErrors, username: ''});
+                  setError(null);
+                  }}
+            />
+            {validationErrors.username &&
+                <p className={styles.errorMessage}>{validationErrors.username}</p>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <div className={styles.passwordWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                className={styles.inputField}
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                    setValidationErrors({...validationErrors, password: ''});
+                    setError(null);
+                    }}
+              />
+              {validationErrors.password &&
+                  <p className={styles.errorMessage}>{validationErrors.password}</p>}
+          </div>
+
           <button
             type="button"
+            className={styles.togglePassword}
             onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: 'absolute',
-              right: '5px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'none',
-              border: 'none',          // Removes border
-              outline: 'none',         // Removes outline when clicked
-              cursor: 'pointer',
-              padding: '0 5px'         // Adds some clickable area
-            }}
           >
             {showPassword ? '🙈' : '👁️'}
           </button>
         </div>
-        <button type="submit">Login</button>
+
+        <button
+         type="submit"
+         className={styles.submitButton}
+
+         >Login</button>
       </form>
     </div>
   );
