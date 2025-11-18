@@ -27,3 +27,20 @@ export const validateTask = (task) => {
       }
       return  newErrors;
 };
+
+export const validateLogin = (username, password) => {
+    const validationErrors = {};
+
+    if (!username.trim()) {
+        validationErrors.username = 'Username is required';
+    } else if (username.length <= 1) {
+        validationErrors.username = 'username needs 1+ characters';
+    }
+    if (!password.trim()) {
+        validationErrors.password = 'Password is required';
+    } else if (password.length < 2) {
+        validationErrors.password = 'Password needs 1+ characters';
+    }
+
+    return validationErrors;
+};
